@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiss Railway Timetable Service</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/TextPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/SplitText.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #0061FF;
+            --primary-dark: #0052D6;
+            --primary-light: #E6F0FF;
+            --secondary: #111827;
+            --accent: #FF3366;
+            --bg-dark: #1E293B;
+            --bg-light: #F8FAFC;
+            --card-bg-light: #FFFFFF;
+            --card-bg-dark: #0F172A;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --swiss-red: #D91F2A;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--secondary);
+            background: linear-gradient(135deg, var(--bg-light) 0%, #EEF2FF 100%);
+        }
+
+        /* Modern navbar styling */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Departure Board Station Navigation */
+        .railway-nav-container {
+            position: relative;
+            height: 80px;
+            width: 100%;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        /* Railway Track Styles */
+        .railway-track-container {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .railway-track {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .railway-sleeper {
+            position: absolute;
+            width: 12px;
+            height: 3px;
+            background: linear-gradient(to bottom, #94A3B8, #64748B);
+            border-radius: 1px;
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .railway-rail {
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(to bottom, #64748B, #334155);
+            border-radius: 1px;
+            z-index: 2;
+        }
+
+        .railway-rail-top {
+            top: 8px;
+        }
+
+        .railway-rail-bottom {
+            bottom: 8px;
+        }
+
+        /* Departure Board Styled Navigation */
+        .departure-board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 85%;
+            margin: 0 auto;
+            height: 100%;
+            position: relative;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        .board-station {
+            position: relative;
+            padding: 8px 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            user-select: none;
+            margin: 0 5px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-width: 120px;
+            flex: 1;
+            font-family: 'Inter', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .board-station:hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 40, 100, 0.4);
+        }
+
+        .board-station.active {
+            color: white;
+            background: rgba(0, 97, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 97, 255, 0.5);
+            border: 1px solid rgba(0, 97, 255, 0.5);
+        }
+
+        .station-time {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .board-station.active .station-time {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .station-connector {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: linear-gradient(to bottom, #94A3B8, #64748B);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+
+        /* Detailed Swiss Train Design */
+        .train-container {
+            position: absolute;
+            width: 120px;
+            height: 35px;
+            bottom: 16px;
+            left: calc(12.5% - 14px);
+            z-index: 10;
+            will-change: transform, left;
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .train-container svg {
+            position: relative;
+            width: 120px;
+            height: 35px;
+        }
+
+        @keyframes trainWheelRotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .train-wheel {
+            transform-origin: center;
+            animation: trainWheelRotation 0.8s linear infinite;
+            animation-play-state: paused;
+            transform-box: fill-box;
+        }
+
+        .train-container.moving .train-wheel {
+            animation-play-state: running;
+        }
+
+        .train-container.moving {
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes smokeAnimation {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-20px) scale(2);
+                opacity: 0;
+            }
+        }
+
+        .train-smoke {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+
+        .train-container.moving .train-smoke {
+            animation: smokeAnimation 1.8s infinite;
+            opacity: 0.8;
+        }
+
+
+        .train-container.moving .train-smoke:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .train-container.moving .train-smoke:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .train-container.moving .train-smoke:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+
+        .train-light {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .train-container.moving .train-light {
+            opacity: 0.8;
+        }
+
+        .speed-lines {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .train-container.moving .speed-lines {
+            opacity: 0.8;
+        }
+
+        .dark-section {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0F172A 100%);
+            color: white;
+        }
+
+        /* Dual tone sections */
+        .dual-tone-light {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
+        }
+
+        .dual-tone-dark {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+        }
+
+        .dual-tone-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+        }
+
+        /* Hero section to cover full viewport */
+        .hero {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding-top: 80px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            background-image: url('hero.png');
+            overflow: hidden;
+            left: 0;
+            right: 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.125);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        /* News ticker */
+        .news-ticker {
+            overflow: hidden;
+            height: 40px;
+            position: relative;
+        }
+
+        .news-ticker-content {
+            position: absolute;
+            animation: ticker 25s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-120%);
+            }
+        }
+
+        .custom-input {
+            transition: all 0.3s ease;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            outline: none;
+            font-size: 0.95rem;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+        }
+
+        .custom-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.15);
+            outline: none;
+            background: white;
+        }
+
+        /* Modern button styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+            color: white;
+            padding: 0.9rem 1.8rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 16px rgba(0, 97, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            z-index: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 97, 255, 0.3);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 0.8;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn-primary:focus::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(100, 100);
+                opacity: 0;
+            }
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary);
+            border: 1px solid rgba(0, 97, 255, 0.3);
+            padding: 0.9rem 1.8rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 97, 255, 0.15);
+            border-color: var(--primary);
+        }
+
+        .modern-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 16px 40px rgba(0, 97, 255, 0.15);
+            border-color: rgba(0, 97, 255, 0.1);
+        }
+
+        .modern-card-dark {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            color: white;
+        }
+
+        .modern-card-dark:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 97, 255, 0.3);
+        }
+
+        /* Modern components */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card-dark {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-on-time {
+            background-color: var(--success);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .status-delayed {
+            background-color: var(--warning);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .status-cancelled {
+            background-color: var(--error);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Floating elements animation */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            25% {
+                transform: translateY(-15px) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            75% {
+                transform: translateY(15px) translateX(-10px);
+            }
+
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+        }
+
+        /* Glow effect */
+        .glow {
+            box-shadow: 0 0 20px rgba(0, 97, 255, 0.5);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 12px rgba(0, 97, 255, 0.5);
+            }
+
+            to {
+                box-shadow: 0 0 25px rgba(0, 97, 255, 0.8), 0 0 40px rgba(0, 97, 255, 0.4);
+            }
+        }
+
+        /* Connection card hover effect */
+        .connection-card {
+            position: relative;
+            transition: all 0.4s ease;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .connection-card::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-light), #EEF2FF);
+            transform: scaleX(0);
+            transform-origin: 0 50%;
+            transition: transform 0.6s ease-out;
+            border-radius: 16px;
+        }
+
+        .connection-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .connection-card:hover .status-on-time {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .connection-card:hover .train-indicator {
+            animation: slideRight 3s infinite linear;
+        }
+
+        @keyframes slideRight {
+            0% {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+
+        /* Form focus animations */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-label {
+            position: absolute;
+            left: 16px;
+            top: 14px;
+            color: #64748B;
+            font-size: 0.95rem;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .custom-input:focus+.input-label,
+        .custom-input:not(:placeholder-shown)+.input-label {
+            transform: translateY(-24px) scale(0.85);
+            color: var(--primary);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 245, 255, 1) 100%);
+            padding: 0 8px;
+            font-weight: 600;
+        }
+
+        /* Search box animation */
+        .search-box {
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        .search-box:focus-within {
+            transform: scale(1.03);
+            box-shadow: 0 16px 40px rgba(0, 97, 255, 0.1);
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), #4F46E5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        /* Checkbox styling */
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #CBD5E1;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            margin-right: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox:checked {
+            background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+            border-color: var(--primary);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.1);
+        }
+
+        /* Parallax effect */
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            will-change: transform;
+        }
+
+        /* Animated element */
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Power text animation for hero */
+        @keyframes powerFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes powerGlow {
+            0% {
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            }
+
+            50% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(0, 97, 255, 0.4);
+            }
+
+            100% {
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .power-text {
+            animation: powerFadeIn 1.2s cubic-bezier(0.17, 0.67, 0.26, 0.97) forwards, powerGlow 3s infinite 1.2s;
+            opacity: 0;
+        }
+
+        .power-text:nth-child(2) {
+            animation-delay: 0.3s, 1.5s;
+        }
+
+        .power-text:nth-child(3) {
+            animation-delay: 0.6s, 1.8s;
+        }
+
+        /* 3D Card Effect */
+        .card-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .card-3d-inner {
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-3d:hover .card-3d-inner {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+
+        /* Text reveal animation */
+        .text-reveal-container {
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .text-reveal {
+            display: block;
+            transform: translateY(100%);
+        }
+
+        /* Train line animation */
+        .train-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
+            width: 80%;
+            top: 50%;
+            left: -100%;
+            animation: trainLine 2s linear infinite;
+        }
+
+        @keyframes trainLine {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Spotlight effect */
+        .spotlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 60%);
+        }
+
+        /* Add more padding to sections */
+        section {
+            padding-top: 80px;
+            padding-bottom: 80px;
+            margin-top: -80px;
+        }
+
+        /* Stats section specific padding */
+        .stats-section {
+            padding-top: 120px;
+            padding-bottom: 100px;
+            margin-top: 0;
+        }
+
+        /* Flip display animation for departure board */
+        @keyframes flipNumber {
+            0% {
+                transform: rotateX(0deg);
+                opacity: 1;
+            }
+
+            50% {
+                transform: rotateX(90deg);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: rotateX(0deg);
+                opacity: 1;
+            }
+        }
+
+        .board-status {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            margin-top: 3px;
+            color: #10B981;
+        }
+
+        .board-station.active .board-status {
+            background: rgba(0, 97, 255, 0.3);
+            animation: flipNumber 1.5s infinite;
+            animation-delay: 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Modern notification bar with news ticker -->
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-700 w-full py-2 text-white">
+        <div class="news-ticker">
+            <div class="news-ticker-content">
+                🔔 System update scheduled for May 5th, 2025 | New timetable API available | Documentation updates for
+                Alpine routes | Real-time tracking now available | Interactive 3D train map coming soon
+            </div>
+        </div>
+    </div>
+
+    <!-- New Modern Navbar with Railway Station Board Navigation -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 relative">
+                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="10" fill="url(#logo-gradient)" />
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#0061FF" />
+                                    <stop offset="100%" stop-color="#6610F2" />
+                                </linearGradient>
+                            </defs>
+                            <path
+                                d="M30 10H10C9.2 10 8.5 10.7 8.5 11.5V28.5C8.5 29.3 9.2 30 10 30H30C30.8 30 31.5 29.3 31.5 28.5V11.5C31.5 10.7 30.8 10 30 10Z"
+                                fill="white" />
+                            <path d="M28 20H12M12 15H28M12 25H28" stroke="url(#logo-gradient)" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                        <div
+                            class="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">!</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+                            Swiss Railway</h1>
+                        <p class="text-xs text-blue-300">Timetable Service</p>
+                    </div>
+                </div>
+
+                <!-- Language Selector -->
+                <div class="flex space-x-2">
+                    <button
+                        class="px-3 py-1.5 bg-blue-700 bg-opacity-20 rounded-md text-sm text-blue-100 font-medium hover:bg-blue-600 hover:bg-opacity-30 transition-colors border border-blue-600 border-opacity-20">EN</button>
+                    <button
+                        class="px-3 py-1.5 bg-blue-700 bg-opacity-20 rounded-md text-sm text-blue-100 font-medium hover:bg-blue-600 hover:bg-opacity-30 transition-colors border border-blue-600 border-opacity-20">DE</button>
+                    <button
+                        class="px-3 py-1.5 bg-blue-700 bg-opacity-20 rounded-md text-sm text-blue-100 font-medium hover:bg-blue-600 hover:bg-opacity-30 transition-colors border border-blue-600 border-opacity-20">FR</button>
+                </div>
+            </div>
+
+            <!-- Railway Station Departure Board Navigation -->
+            <div class="railway-nav-container">
+                <!-- Railway Station Board -->
+                <div class="departure-board">
+                    <div class="board-station station-home active" data-position="12.5" data-section="home">
+                        Home
+                        <div class="station-time">08:00</div>
+                        <div class="board-status">ON TIME</div>
+                        <div class="station-connector"></div>
+                    </div>
+                    <div class="board-station station-timetables" data-position="37.5" data-section="timetables">
+                        Timetables
+                        <div class="station-time">08:15</div>
+                        <div class="board-status">ON TIME</div>
+                        <div class="station-connector"></div>
+                    </div>
+                    <div class="board-station station-documentation" data-position="62.5" data-section="documentation">
+                        Documentation
+                        <div class="station-time">08:30</div>
+                        <div class="board-status">ON TIME</div>
+                        <div class="station-connector"></div>
+                    </div>
+                    <div class="board-station station-contact" data-position="87.5" data-section="contact">
+                        Contact
+                        <div class="station-time">08:45</div>
+                        <div class="board-status">ON TIME</div>
+                        <div class="station-connector"></div>
+                    </div>
+                </div>
+
+                <!-- Detailed Swiss Train SVG -->
+                <div id="train-container" class="train-container">
+                    <!-- Smoke particles -->
+                    <div class="train-smoke" style="left: 5px; top: 5px;"></div>
+                    <div class="train-smoke" style="left: 8px; top: 3px;"></div>
+                    <div class="train-smoke" style="left: 3px; top: 4px;"></div>
+
+                    <svg width="120" height="35" viewBox="0 0 120 35" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="trainBodyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#D91F2A" />
+                                <stop offset="100%" stop-color="#BF0C19" />
+                            </linearGradient>
+                            <linearGradient id="trainRoofGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#333" />
+                                <stop offset="100%" stop-color="#666" />
+                            </linearGradient>
+                            <linearGradient id="windowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#E0F2FE" />
+                                <stop offset="100%" stop-color="#BAE6FD" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                            <radialGradient id="metalGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                <stop offset="0%" stop-color="#888" />
+                                <stop offset="100%" stop-color="#444" />
+                            </radialGradient>
+                            <linearGradient id="wheelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#444" />
+                                <stop offset="50%" stop-color="#111" />
+                                <stop offset="100%" stop-color="#333" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Train Base Undercarriage -->
+                        <rect x="5" y="21" width="110" height="3" rx="1" fill="#222" />
+
+                        <!-- Train Wheels - Detailed Swiss Style -->
+                        <g class="train-wheel">
+                            <circle cx="20" cy="26" r="3.5" fill="url(#wheelGradient)" stroke="#111"
+                                stroke-width="0.5" />
+                            <circle cx="20" cy="26" r="2.2" fill="url(#metalGradient)" stroke="#333"
+                                stroke-width="0.2" />
+                            <circle cx="20" cy="26" r="0.8" fill="#111" />
+                            <line x1="20" y1="23.6" x2="20" y2="28.4" stroke="#555" stroke-width="0.3" />
+                            <line x1="17.6" y1="26" x2="22.4" y2="26" stroke="#555" stroke-width="0.3" />
+                            <line x1="18.5" y1="24.5" x2="21.5" y2="27.5" stroke="#555" stroke-width="0.3" />
+                            <line x1="18.5" y1="27.5" x2="21.5" y2="24.5" stroke="#555" stroke-width="0.3" />
+                        </g>
+
+                        <g class="train-wheel">
+                            <circle cx="35" cy="26" r="3.5" fill="url(#wheelGradient)" stroke="#111"
+                                stroke-width="0.5" />
+                            <circle cx="35" cy="26" r="2.2" fill="url(#metalGradient)" stroke="#333"
+                                stroke-width="0.2" />
+                            <circle cx="35" cy="26" r="0.8" fill="#111" />
+                            <line x1="35" y1="23.6" x2="35" y2="28.4" stroke="#555" stroke-width="0.3" />
+                            <line x1="32.6" y1="26" x2="37.4" y2="26" stroke="#555" stroke-width="0.3" />
+                            <line x1="33.5" y1="24.5" x2="36.5" y2="27.5" stroke="#555" stroke-width="0.3" />
+                            <line x1="33.5" y1="27.5" x2="36.5" y2="24.5" stroke="#555" stroke-width="0.3" />
+                        </g>
+
+                        <g class="train-wheel">
+                            <circle cx="50" cy="26" r="3.5" fill="url(#wheelGradient)" stroke="#111"
+                                stroke-width="0.5" />
+                            <circle cx="50" cy="26" r="2.2" fill="url(#metalGradient)" stroke="#333"
+                                stroke-width="0.2" />
+                            <circle cx="50" cy="26" r="0.8" fill="#111" />
+                            <line x1="50" y1="23.6" x2="50" y2="28.4" stroke="#555" stroke-width="0.3" />
+                            <line x1="47.6" y1="26" x2="52.4" y2="26" stroke="#555" stroke-width="0.3" />
+                            <line x1="48.5" y1="24.5" x2="51.5" y2="27.5" stroke="#555" stroke-width="0.3" />
+                            <line x1="48.5" y1="27.5" x2="51.5" y2="24.5" stroke="#555" stroke-width="0.3" />
+                        </g>
+
+                        <g class="train-wheel">
+                            <circle cx="65" cy="26" r="3.5" fill="url(#wheelGradient)" stroke="#111"
+                                stroke-width="0.5" />
+                            <circle cx="65" cy="26" r="2.2" fill="url(#metalGradient)" stroke="#333"
+                                stroke-width="0.2" />
+                            <circle cx="65" cy="26" r="0.8" fill="#111" />
+                            <line x1="65" y1="23.6" x2="65" y2="28.4" stroke="#555" stroke-width="0.3" />
+                            <line x1="62.6" y1="26" x2="67.4" y2="26" stroke="#555" stroke-width="0.3" />
+                            <line x1="63.5" y1="24.5" x2="66.5" y2="27.5" stroke="#555" stroke-width="0.3" />
+                            <line x1="63.5" y1="27.5" x2="66.5" y2="24.5" stroke="#555" stroke-width="0.3" />
+                        </g>
+
+                        <g class="train-wheel">
+                            <circle cx="80" cy="26" r="3.5" fill="url(#wheelGradient)" stroke="#111"
+                                stroke-width="0.5" />
+                            <circle cx="80" cy="26" r="2.2" fill="url(#metalGradient)" stroke="#333"
+                                stroke-width="0.2" />
+                            <circle cx="80" cy="26" r="0.8" fill="#111" />
+                            <line x1="80" y1="23.6" x2="80" y2="28.4" stroke="#555" stroke-width="0.3" />
+                            <line x1="77.6" y1="26" x2="82.4" y2="26" stroke="#555" stroke-width="0.3" />
+                            <line x1="78.5" y1="24.5" x2="81.5" y2="27.5" stroke="#555" stroke-width="0.3" />
+                            <line x1="78.5" y1="27.5" x2="81.5" y2="24.5" stroke="#555" stroke-width="0.3" />
+                        </g>
+
+                        <g class="train-wheel">
+                            <circle cx="95" cy="26" r="3.5" fill="url(#wheelGradient)" stroke="#111"
+                                stroke-width="0.5" />
+                            <circle cx="95" cy="26" r="2.2" fill="url(#metalGradient)" stroke="#333"
+                                stroke-width="0.2" />
+                            <circle cx="95" cy="26" r="0.8" fill="#111" />
+                            <line x1="95" y1="23.6" x2="95" y2="28.4" stroke="#555" stroke-width="0.3" />
+                            <line x1="92.6" y1="26" x2="97.4" y2="26" stroke="#555" stroke-width="0.3" />
+                            <line x1="93.5" y1="24.5" x2="96.5" y2="27.5" stroke="#555" stroke-width="0.3" />
+                            <line x1="93.5" y1="27.5" x2="96.5" y2="24.5" stroke="#555" stroke-width="0.3" />
+                        </g>
+
+                        <!-- Train Axles and Suspension -->
+                        <rect x="16.5" y="21" width="7" height="1" rx="0.5" fill="#555" />
+                        <rect x="31.5" y="21" width="7" height="1" rx="0.5" fill="#555" />
+                        <rect x="46.5" y="21" width="7" height="1" rx="0.5" fill="#555" />
+                        <rect x="61.5" y="21" width="7" height="1" rx="0.5" fill="#555" />
+                        <rect x="76.5" y="21" width="7" height="1" rx="0.5" fill="#555" />
+                        <rect x="91.5" y="21" width="7" height="1" rx="0.5" fill="#555" />
+
+                        <!-- Train Roof -->
+                        <path d="M5,8 Q5,6 8,5 L112,5 Q115,6 115,8 L115,10 Q115,12 112,12 L8,12 Q5,12 5,10 Z"
+                            fill="url(#trainRoofGradient)" />
+
+                        <!-- Train Main Body - Swiss Red -->
+                        <path
+                            d="M8,10 L112,10 Q114,10 114,13 L114,18 Q114,21 112,21 L8,21 Q6,21 6,18 L6,13 Q6,10 8,10 Z"
+                            fill="url(#trainBodyGradient)" />
+
+                        <!-- Train Front & Rear Details -->
+                        <path d="M6,13 Q6,11 9,10 L10,10 Q9,12 9,14 L8,14 Q6,14 6,13 Z" fill="#333" />
+                        <path d="M114,13 Q114,11 111,10 L110,10 Q111,12 111,14 L112,14 Q114,14 114,13 Z" fill="#333" />
+
+                        <!-- Windshield -->
+                        <path d="M9,14 L14,14 L14,19 L9,19 Q7,19 7,17 L7,16 Q7,14 9,14 Z" fill="url(#windowGradient)"
+                            opacity="0.9" />
+
+                        <!-- Windows -->
+                        <rect x="18" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="30" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="42" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="54" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="66" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="78" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="90" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+                        <rect x="102" y="14" width="8" height="5" rx="1" fill="url(#windowGradient)" opacity="0.9" />
+
+                        <!-- Train Detail Lines -->
+                        <line x1="6" y1="17" x2="114" y2="17" stroke="#990000" stroke-width="0.5" />
+                        <line x1="6" y1="19" x2="114" y2="19" stroke="#990000" stroke-width="0.5" />
+
+                        <!-- Swiss Cross Logo -->
+                        <rect x="60" y="11" width="6" height="6" rx="1" fill="white" />
+                        <rect x="62" y="12" width="2" height="4" fill="#D91F2A" />
+                        <rect x="61" y="13" width="4" height="2" fill="#D91F2A" />
+
+                        <!-- Front Headlights -->
+                        <circle cx="7" cy="15" r="1" fill="#FFDF5E" stroke="#FFDF5E" stroke-width="0.2"
+                            class="train-light" filter="url(#glow)" opacity="0" />
+                        <circle cx="7" cy="18" r="1" fill="#FFDF5E" stroke="#FFDF5E" stroke-width="0.2"
+                            class="train-light" filter="url(#glow)" opacity="0" />
+
+                        <!-- Light Beam -->
+                        <path d="M6,15 L0,12 L0,18 Z" fill="rgba(255,255,255,0.6)" class="train-light"
+                            filter="url(#glow)" opacity="0" />
+
+                        <!-- Speed Lines -->
+                        <g class="speed-lines" opacity="0">
+                            <line x1="5" y1="13" x2="-10" y2="13" stroke="white" stroke-width="1"
+                                stroke-dasharray="3 2" />
+                            <line x1="5" y1="15" x2="-12" y2="15" stroke="white" stroke-width="1"
+                                stroke-dasharray="4 2" />
+                            <line x1="5" y1="17" x2="-15" y2="17" stroke="white" stroke-width="1"
+                                stroke-dasharray="5 2" />
+                        </g>
+
+                        <!-- Pantograph (electricity collector) -->
+                        <path d="M58,5 L58,3 L62,3 L62,5 M58,3 L55,0 M62,3 L65,0 M55,0 L65,0" stroke="#666"
+                            stroke-width="0.8" fill="none" />
+                    </svg>
+                </div>
+
+                <!-- Railway Track -->
+                <div class="railway-track-container">
+                    <div class="railway-track">
+                        <div class="railway-rail railway-rail-top"></div>
+                        <div class="railway-rail railway-rail-bottom"></div>
+                        <div id="railway-sleepers"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section with Full-width Image, adjusted for fixed navbar -->
+        <section id="home" class="hero">
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="hero-content text-center text-white">
+                    <h2 class="text-5xl md:text-7xl font-bold mb-4 tracking-tight">
+                        <span class="power-text block">Swiss Railway</span>
+                        <span class="power-text block mt-2">Timetable Service</span>
+                    </h2>
+                    <p class="text-2xl mb-10 max-w-2xl mx-auto power-text opacity-0">Coordinating timetables for the
+                        entire Swiss railway network</p>
+                    <div class="flex flex-col sm:flex-row justify-center space-y-6 sm:space-y-0 sm:space-x-6">
+                        <a href="#timetables" class="btn-primary flex items-center justify-center group">
+                            <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Timetables
+                        </a>
+                        <a href="#documentation" class="btn-secondary flex items-center justify-center group">
+                            <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            Documentation
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animated elements -->
+            <div class="absolute bottom-20 left-20 w-24 h-24 bg-white/10 rounded-full floating"
+                style="animation-delay: 0.5s"></div>
+            <div class="absolute top-40 right-20 w-36 h-36 bg-white/10 rounded-full floating"
+                style="animation-delay: 1s"></div>
+            <div class="absolute bottom-40 right-40 w-20 h-20 bg-white/10 rounded-full floating"
+                style="animation-delay: 1.5s"></div>
+
+            <!-- Spotlight effect for interactivity -->
+            <div class="spotlight"></div>
+        </section>
+
+        <!-- Key Stats Section with Animation - Fixed Padding -->
+        <section class="stats-section dual-tone-dark text-white relative overflow-hidden">
+            <div class="container mx-auto px-4 relative z-10">
+                <h2
+                    class="text-3xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+                    Swiss Railway Network</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+                    <div class="text-center stat-item modern-card-dark p-6">
+                        <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="26000">0</div>
+                        <div class="text-blue-100">Trains Per Day</div>
+                    </div>
+                    <div class="text-center stat-item modern-card-dark p-6">
+                        <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="5300">0</div>
+                        <div class="text-blue-100">km of Railway</div>
+                    </div>
+                    <div class="text-center stat-item modern-card-dark p-6">
+                        <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="400">0</div>
+                        <div class="text-blue-100">Railway Stations</div>
+                    </div>
+                    <div class="text-center stat-item modern-card-dark p-6">
+                        <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="93">0</div>
+                        <div class="text-blue-100">On-Time Performance %</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Animated background elements -->
+            <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+                <div
+                    class="absolute top-10 left-10 w-96 h-96 rounded-full bg-blue-600 opacity-10 transform -translate-x-1/2 -translate-y-1/2 blur-3xl">
+                </div>
+                <div
+                    class="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-indigo-600 opacity-10 transform translate-x-1/2 translate-y-1/2 blur-3xl">
+                </div>
+            </div>
+        </section>
+
+        <!-- Timetables Section with Modern UI -->
+        <section id="timetables" class="py-24 dual-tone-light relative">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold mb-3 text-center gradient-text">Timetable Search</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Find train schedules between any stations
+                    in the Swiss railway network</p>
+
+                <div class="max-w-4xl mx-auto">
+                    <div class="glass-card p-8 shadow-xl search-box transition-all">
+                        <form class="grid grid-cols-1 md:grid-cols-6 gap-8">
+                            <div class="space-y-2 md:col-span-2 input-wrapper">
+                                <input id="departure" type="text" class="custom-input block w-full" placeholder=" ">
+                                <label class="input-label" for="departure">From</label>
+                            </div>
+
+                            <div class="space-y-2 md:col-span-2 input-wrapper">
+                                <input id="arrival" type="text" class="custom-input block w-full" placeholder=" ">
+                                <label class="input-label" for="arrival">To</label>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-2 input-wrapper">
+                                        <input id="date" type="date" class="custom-input block w-full" placeholder=" ">
+                                        <label class="input-label" for="date">Date</label>
+                                    </div>
+
+                                    <div class="space-y-2 input-wrapper">
+                                        <input id="time" type="time" class="custom-input block w-full" placeholder=" ">
+                                        <label class="input-label" for="time">Time</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-6 flex space-x-6">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="direct-only" class="custom-checkbox">
+                                    <label for="direct-only" class="text-sm text-gray-700 font-medium">Direct
+                                        connections
+                                        only</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="bike" class="custom-checkbox">
+                                    <label for="bike" class="text-sm text-gray-700 font-medium">Bike transport</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="accessibility" class="custom-checkbox">
+                                    <label for="accessibility" class="text-sm text-gray-700 font-medium">Wheelchair
+                                        accessible</label>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-6">
+                                <button type="button" class="btn-primary w-full flex items-center justify-center group">
+                                    <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    Search Connection
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Popular Connections with Interactive Cards -->
+                <div class="max-w-4xl mx-auto mt-16">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-2xl font-bold gradient-text">Popular Connections</h3>
+                        <button
+                            class="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium flex items-center group">
+                            View all
+                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Connection 1 -->
+                        <div class="modern-card p-6 connection-card card-3d">
+                            <div class="card-3d-inner">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="font-bold text-lg">Zürich → Bern</h4>
+                                    <span
+                                        class="text-xs font-bold px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full">56
+                                        min</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mb-5">Every hour at :02</div>
+                                <div class="border-t border-gray-100 pt-4 space-y-4">
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IC 731</span>
+                                        </div>
+                                        <span class="font-medium">10:02 → 10:58</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IC 733</span>
+                                        </div>
+                                        <span class="font-medium">11:02 → 11:58</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IC 735</span>
+                                        </div>
+                                        <span class="font-medium">12:02 → 12:58</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Interactive element -->
+                                <button
+                                    class="mt-5 w-full py-3 text-sm text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center group">
+                                    <svg class="w-4 h-4 mr-2 transition-transform group-hover:rotate-90 duration-300"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    More times
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Connection 2 -->
+                        <div class="modern-card p-6 connection-card card-3d">
+                            <div class="card-3d-inner">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="font-bold text-lg">Bern → Lausanne</h4>
+                                    <span
+                                        class="text-xs font-bold px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full">66
+                                        min</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mb-5">Every hour at :34</div>
+                                <div class="border-t border-gray-100 pt-4 space-y-4">
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-delayed"></span>
+                                            <span class="font-medium">IC 717</span>
+                                        </div>
+                                        <span class="font-medium">10:34 → 11:40</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-orange-500 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IC 719</span>
+                                        </div>
+                                        <span class="font-medium">11:34 → 12:40</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IC 721</span>
+                                        </div>
+                                        <span class="font-medium">12:34 → 13:40</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Interactive element -->
+                                <button
+                                    class="mt-5 w-full py-3 text-sm text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center group">
+                                    <svg class="w-4 h-4 mr-2 transition-transform group-hover:rotate-90 duration-300"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    More times
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Connection 3 -->
+                        <div class="modern-card p-6 connection-card card-3d">
+                            <div class="card-3d-inner">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="font-bold text-lg">Zürich → Lucerne</h4>
+                                    <span
+                                        class="text-xs font-bold px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full">45
+                                        min</span>
+                                </div>
+                                <div class="text-sm text-gray-500 mb-5">Every hour at :10</div>
+                                <div class="border-t border-gray-100 pt-4 space-y-4">
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IR 2521</span>
+                                        </div>
+                                        <span class="font-medium">10:10 → 10:55</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-on-time"></span>
+                                            <span class="font-medium">IR 2523</span>
+                                        </div>
+                                        <span class="font-medium">11:10 → 11:55</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-blue-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm relative overflow-hidden">
+                                        <div class="flex items-center">
+                                            <span class="status-indicator status-cancelled"></span>
+                                            <span class="font-medium">IR 2525</span>
+                                        </div>
+                                        <span class="font-medium">12:10 → 12:55</span>
+                                        <div
+                                            class="train-indicator absolute top-1/2 transform -translate-y-1/2 left-0 w-3 h-2 bg-red-600 rounded-sm opacity-0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Interactive element -->
+                                <button
+                                    class="mt-5 w-full py-3 text-sm text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center group">
+                                    <svg class="w-4 h-4 mr-2 transition-transform group-hover:rotate-90 duration-300"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    More times
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Departures Board -->
+                <div class="max-w-4xl mx-auto mt-16">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-2xl font-bold gradient-text">Live Departures</h3>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                            <span class="text-sm text-gray-600">Updating live</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white py-3 px-6">
+                            <div class="grid grid-cols-12 text-sm font-bold">
+                                <div class="col-span-1">Time</div>
+                                <div class="col-span-2">Train</div>
+                                <div class="col-span-4">Destination</div>
+                                <div class="col-span-2">Platform</div>
+                                <div class="col-span-3">Status</div>
+                            </div>
+                        </div>
+                        <div class="divide-y divide-gray-100">
+                            <div
+                                class="grid grid-cols-12 py-4 px-6 items-center hover:bg-blue-50 transition-colors cursor-pointer">
+                                <div class="col-span-1 font-medium">09:32</div>
+                                <div class="col-span-2">IC 721</div>
+                                <div class="col-span-4">Geneva</div>
+                                <div class="col-span-2">
+                                    <span
+                                        class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">4</span>
+                                </div>
+                                <div class="col-span-3 flex items-center">
+                                    <span class="status-indicator status-on-time"></span>
+                                    <span class="text-green-700 font-medium">On Time</span>
+                                </div>
+                            </div>
+                            <div
+                                class="grid grid-cols-12 py-4 px-6 items-center hover:bg-blue-50 transition-colors cursor-pointer">
+                                <div class="col-span-1 font-medium">09:45</div>
+                                <div class="col-span-2">IR 2815</div>
+                                <div class="col-span-4">Lucerne</div>
+                                <div class="col-span-2">
+                                    <span
+                                        class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">7</span>
+                                </div>
+                                <div class="col-span-3 flex items-center">
+                                    <span class="status-indicator status-delayed"></span>
+                                    <span class="text-orange-700 font-medium">+5 min</span>
+                                </div>
+                            </div>
+                            <div
+                                class="grid grid-cols-12 py-4 px-6 items-center hover:bg-blue-50 transition-colors cursor-pointer">
+                                <div class="col-span-1 font-medium">10:02</div>
+                                <div class="col-span-2">IC 731</div>
+                                <div class="col-span-4">Bern</div>
+                                <div class="col-span-2">
+                                    <span
+                                        class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">3</span>
+                                </div>
+                                <div class="col-span-3 flex items-center">
+                                    <span class="status-indicator status-on-time"></span>
+                                    <span class="text-green-700 font-medium">On Time</span>
+                                </div>
+                            </div>
+                            <div
+                                class="grid grid-cols-12 py-4 px-6 items-center hover:bg-blue-50 transition-colors cursor-pointer">
+                                <div class="col-span-1 font-medium">10:15</div>
+                                <div class="col-span-2">RE 522</div>
+                                <div class="col-span-4">St. Gallen</div>
+                                <div class="col-span-2">
+                                    <span
+                                        class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">8</span>
+                                </div>
+                                <div class="col-span-3 flex items-center">
+                                    <span class="status-indicator status-cancelled"></span>
+                                    <span class="text-red-700 font-medium">Cancelled</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section with Modern Cards -->
+        <section id="documentation" class="py-24 dual-tone-dark text-white relative">
+            <div class="container mx-auto px-4">
+                <h2
+                    class="text-4xl font-bold mb-3 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+                    Documentation</h2>
+                <p class="text-center text-blue-200 mb-16 max-w-2xl mx-auto">Access technical documentation for railway
+                    timetable services</p>
+
+                <div class="max-w-4xl mx-auto">
+                    <div
+                        class="bg-gradient-to-br from-blue-900/50 to-indigo-900/50 p-10 rounded-2xl mb-12 relative overflow-hidden glass-card-dark">
+                        <div class="relative z-10">
+                            <div class="flex items-center space-x-4 mb-6">
+                                <div class="p-3 bg-blue-500/20 rounded-xl">
+                                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold">For Railway Companies</h3>
+                            </div>
+                            <p class="mb-10 text-blue-200 text-lg">Technical documentation for railway operators and
+                                transportation companies</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <a href="#"
+                                    class="modern-card-dark block p-6 hover:border-blue-500 transition-all card-3d relative overflow-hidden">
+                                    <div class="card-3d-inner">
+                                        <div class="flex items-center mb-4">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                </svg>
+                                            </div>
+                                            <h4 class="font-bold text-lg text-white">Timetable Development</h4>
+                                        </div>
+                                        <p class="text-sm text-blue-200 mb-4">Documentation for timetable planning and
+                                            development with integrated APIs</p>
+                                        <div class="mt-4 flex items-center text-blue-400 text-sm font-medium group">
+                                            Access documents
+                                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="train-line"></div>
+                                    </div>
+                                </a>
+
+                                <a href="#"
+                                    class="modern-card-dark block p-6 hover:border-blue-500 transition-all card-3d relative overflow-hidden">
+                                    <div class="card-3d-inner">
+                                        <div class="flex items-center mb-4">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                            <h4 class="font-bold text-lg text-white">Technical Specs</h4>
+                                        </div>
+                                        <p class="text-sm text-blue-200 mb-4">Data formats and technical specifications
+                                            for integration</p>
+                                        <div class="mt-4 flex items-center text-blue-400 text-sm font-medium group">
+                                            Access documents
+                                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="train-line"></div>
+                                    </div>
+                                </a>
+
+                                <a href="#"
+                                    class="modern-card-dark block p-6 hover:border-blue-500 transition-all card-3d relative overflow-hidden">
+                                    <div class="card-3d-inner">
+                                        <div class="flex items-center mb-4">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                            <h4 class="font-bold text-lg text-white">Data Services</h4>
+                                        </div>
+                                        <p class="text-sm text-blue-200 mb-4">Access to real-time and historical
+                                            timetable data services</p>
+                                        <div class="mt-4 flex items-center text-blue-400 text-sm font-medium group">
+                                            Access documents
+                                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="train-line"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Background decorative elements -->
+                        <div
+                            class="absolute top-0 right-0 w-96 h-96 bg-blue-600 rounded-full opacity-10 transform translate-x-1/3 -translate-y-1/3 blur-3xl">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 w-80 h-80 bg-indigo-600 rounded-full opacity-10 transform -translate-x-1/3 translate-y-1/3 blur-3xl">
+                        </div>
+                    </div>
+
+                    <!-- Recent updates section -->
+                    <div class="mt-16">
+                        <div class="flex justify-between items-center mb-8">
+                            <h3
+                                class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+                                Recent Documentation Updates</h3>
+                            <button
+                                class="text-blue-400 hover:text-blue-300 transition-colors text-sm font-medium flex items-center group">
+                                All updates
+                                <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="modern-card-dark p-5 flex items-start hover:border-blue-500 transition-all">
+                                <div class="bg-blue-500/20 p-3 rounded-xl mr-4">
+                                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">API Documentation v4.2</h4>
+                                    <p class="text-sm text-blue-200 mb-2">Updated specifications for the Swiss Railway
+                                        timetable API with new endpoints for real-time tracking</p>
+                                    <div class="flex items-center text-xs text-blue-300">
+                                        <span>Updated April 18, 2025</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-blue-400 hover:text-blue-300 cursor-pointer">View
+                                            update</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modern-card-dark p-5 flex items-start hover:border-blue-500 transition-all">
+                                <div class="bg-green-500/20 p-3 rounded-xl mr-4">
+                                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">Alpine Routes Guide</h4>
+                                    <p class="text-sm text-blue-200 mb-2">New documentation for alpine route planning
+                                        and scheduling with seasonal adjustments</p>
+                                    <div class="flex items-center text-xs text-blue-300">
+                                        <span>Added April 10, 2025</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-blue-400 hover:text-blue-300 cursor-pointer">View
+                                            document</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modern-card-dark p-5 flex items-start hover:border-blue-500 transition-all">
+                                <div class="bg-purple-500/20 p-3 rounded-xl mr-4">
+                                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">Integration Toolkit</h4>
+                                    <p class="text-sm text-blue-200 mb-2">New developer tools and SDKs for timetable API
+                                        integration with example code</p>
+                                    <div class="flex items-center text-xs text-blue-300">
+                                        <span>Added April 5, 2025</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="text-blue-400 hover:text-blue-300 cursor-pointer">View
+                                            document</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section with Modern Form -->
+        <section id="contact" class="py-24 dual-tone-light relative">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold mb-3 text-center gradient-text">Contact</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Get in touch with our team for timetable
+                    information</p>
+
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div>
+                        <form class="glass-card p-8 shadow-xl">
+                            <h3 class="text-2xl font-bold mb-6 gradient-text">Send us a message</h3>
+                            <div class="mb-5 input-wrapper">
+                                <input id="name" type="text" class="custom-input block w-full" placeholder=" ">
+                                <label class="input-label" for="name">Name</label>
+                            </div>
+                            <div class="mb-5 input-wrapper">
+                                <input id="email" type="email" class="custom-input block w-full" placeholder=" ">
+                                <label class="input-label" for="email">Email</label>
+                            </div>
+                            <div class="mb-5 input-wrapper">
+                                <select id="subject" class="custom-input block w-full">
+                                    <option value=""></option>
+                                    <option value="timetable">Timetable Inquiry</option>
+                                    <option value="documentation">Documentation Request</option>
+                                    <option value="data">Data Services</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <label class="input-label" for="subject">Subject</label>
+                            </div>
+                            <div class="mb-8 input-wrapper">
+                                <textarea id="message" rows="5" class="custom-input block w-full"
+                                    placeholder=" "></textarea>
+                                <label class="input-label" for="message">Message</label>
+                            </div>
+                            <button type="button" class="btn-primary w-full flex items-center justify-center group">
+                                <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <div class="glass-card p-8 h-full shadow-xl">
+                            <h3 class="text-2xl font-bold mb-6 gradient-text">Contact Information</h3>
+                            <div class="space-y-8">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div
+                                            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center glow">
+                                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                                </path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 mb-2">Address</h4>
+                                        <p class="text-gray-600">Hochschulstrasse 6<br>3012 Bern, Switzerland</p>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div
+                                            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center glow">
+                                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 mb-2">Email</h4>
+                                        <p class="text-gray-600">info@railway-timetable.ch</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div
+                                            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center glow">
+                                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 mb-2">Phone</h4>
+                                        <p class="text-gray-600">+41 31 123 45 67</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div
+                                            class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center glow">
+                                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 mb-2">Office Hours</h4>
+                                        <p class="text-gray-600">Monday - Friday: 8:00 - 17:00<br>Weekend: Closed</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Interactive map button -->
+                            <button
+                                class="mt-8 w-full py-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 hover:bg-blue-100 transition-colors flex items-center justify-center group shadow-md">
+                                <svg class="w-6 h-6 mr-2 text-blue-600 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7">
+                                    </path>
+                                </svg>
+                                View on interactive map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="bg-gradient-to-r from-gray-900 to-slate-800 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="10" fill="url(#footer-logo-gradient)" />
+                            <defs>
+                                <linearGradient id="footer-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#3B82F6" />
+                                    <stop offset="100%" stop-color="#6366F1" />
+                                </linearGradient>
+                            </defs>
+                            <path
+                                d="M30 10H10C9.2 10 8.5 10.7 8.5 11.5V28.5C8.5 29.3 9.2 30 10 30H30C30.8 30 31.5 29.3 31.5 28.5V11.5C31.5 10.7 30.8 10 30 10Z"
+                                fill="white" />
+                            <path d="M28 20H12M12 15H28M12 25H28" stroke="url(#footer-logo-gradient)" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                        <div>
+                            <h3 class="text-xl font-bold">Swiss Railway</h3>
+                            <p class="text-xs text-blue-300">Timetable Service</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-6">The official timetable service for the Swiss railway network.
+                        Providing real-time updates and comprehensive scheduling information.</p>
+
+                    <!-- Social media icons -->
+                    <div class="flex space-x-4">
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center hover:bg-blue-600/40 transition-colors border border-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" />
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center hover:bg-blue-400/40 transition-colors border border-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.016 10.016 0 01-3.127 1.195 4.922 4.922 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z" />
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center hover:bg-blue-700/40 transition-colors border border-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Quick Links</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#home"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7">
+                                    </path>
+                                </svg>
+                                Home
+                            </a></li>
+                        <li><a href="#timetables"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7">
+                                    </path>
+                                </svg>
+                                Timetables
+                            </a></li>
+                        <li><a href="#documentation"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7">
+                                    </path>
+                                </svg>
+                                Documentation
+                            </a></li>
+                        <li><a href="#contact"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7">
+                                    </path>
+                                </svg>
+                                Contact
+                            </a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Resources</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                TVS Documentation
+                            </a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                Technical Specifications
+                            </a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                Data Services
+                            </a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                API Reference
+                            </a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Legal</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                Privacy Policy
+                            </a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                Terms of Service
+                            </a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                Accessibility
+                            </a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-white transition-colors flex items-center group">
+                                <svg class="w-3 h-3 mr-2 transition-transform duration-300 group-hover:translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                Imprint
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2025 Swiss Railway Timetable Service. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize GSAP
+            gsap.registerPlugin(ScrollTrigger, TextPlugin, ScrollToPlugin);
+
+            // Generate railway sleepers
+            const createRailwaySleepers = () => {
+                const sleepersContainer = document.getElementById('railway-sleepers');
+                if (sleepersContainer) {
+                    sleepersContainer.innerHTML = '';
+                    const trackWidth = document.querySelector('.railway-track').offsetWidth;
+                    const sleeperCount = Math.floor(trackWidth / 15); // Spacing between sleepers
+
+                    for (let i = 0; i < sleeperCount; i++) {
+                        const sleeper = document.createElement('div');
+                        sleeper.className = 'railway-sleeper';
+                        sleeper.style.left = (i * 15) + 7.5 + 'px'; // Even spacing
+                        sleepersContainer.appendChild(sleeper);
+                    }
+                }
+            };
+
+            // Create sleepers
+            createRailwaySleepers();
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', function () {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            
+
+            // Hero parallax effect
+            gsap.to('.parallax-bg', {
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                },
+                y: 200,
+                ease: 'none'
+            });
+
+            // Spotlight effect on hero section
+            const spotlight = document.querySelector('.spotlight');
+            if (spotlight) {
+                document.querySelector('.hero').addEventListener('mousemove', (e) => {
+                    const x = e.clientX / window.innerWidth * 100;
+                    const y = e.clientY / window.innerHeight * 100;
+                    spotlight.style.setProperty('--x', `${x}%`);
+                    spotlight.style.setProperty('--y', `${y}%`);
+                });
+            }
+
+            // Handle menu station clicks with enhanced train animation
+            const stations = document.querySelectorAll('.board-station');
+            const train = document.getElementById('train-container');
+
+            stations.forEach(station => {
+                station.addEventListener('click', function () {
+                    // Remove active class from all stations
+                    stations.forEach(s => s.classList.remove('active'));
+
+                    // Add active class to clicked station
+                    this.classList.add('active');
+
+                    // Add moving class to train
+                    train.classList.add('moving');
+
+                    // Move train to station position
+                    const position = this.getAttribute('data-position');
+                    train.style.left = `calc(${position}% - 14px)`;
+
+                    // Get section ID and scroll to it
+                    const sectionId = this.getAttribute('data-section');
+                    if (sectionId) {
+                        const section = document.getElementById(sectionId);
+                        if (section) {
+                            gsap.to(window, {
+                                duration: 0.8,
+                                scrollTo: {
+                                    y: section,
+                                    offsetY: 80
+                                },
+                                ease: "power2.inOut"
+                            });
+                        }
+                    }
+
+                    // Remove moving class after animation completes
+                    setTimeout(() => {
+                        train.classList.remove('moving');
+                    }, 1000);
+                });
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                createRailwaySleepers();
+            });
+
+            // Add smooth scrolling to anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Get the target section
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+
+                    if (targetSection) {
+                        // Scroll to the section
+                        gsap.to(window, {
+                            duration: 0.8,
+                            scrollTo: {
+                                y: targetSection,
+                                offsetY: 80
+                            },
+                            ease: "power2.inOut"
+                        });
+
+                        // Update active station in the menu
+                        const sectionId = targetId.substring(1); // Remove the # from the ID
+                        const matchingStation = document.querySelector(`.board-station[data-section="${sectionId}"]`);
+
+                        if (matchingStation) {
+                            // Remove active class from all stations
+                            stations.forEach(s => s.classList.remove('active'));
+
+                            // Add active class to matching station
+                            matchingStation.classList.add('active');
+
+                            // Move train with animation
+                            const position = matchingStation.getAttribute('data-position');
+                            train.classList.add('moving');
+                            train.style.left = `calc(${position}% - 14px)`;
+
+                            // Remove moving class after animation completes
+                            setTimeout(() => {
+                                train.classList.remove('moving');
+                            }, 1000);
+                        }
+                    }
+                });
+            });
+
+            // Handle scroll to update active menu item
+            const sections = document.querySelectorAll('section[id]');
+            window.addEventListener('scroll', function () {
+                let current = '';
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                if (current) {
+                    stations.forEach(station => {
+                        station.classList.remove('active');
+                        if (station.getAttribute('data-section') === current) {
+                            station.classList.add('active');
+
+                            // Move train without animation during scroll
+                            if (!train.classList.contains('moving')) {
+                                const position = station.getAttribute('data-position');
+                                train.style.left = `calc(${position}% - 14px)`;
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Add counter animation for statistics with Intersection Observer
+            const statItems = document.querySelectorAll('.stat-item');
+
+            // Create observer for stats section
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Animate all counters in the section
+                        const counters = entry.target.querySelectorAll('.counter');
+                        counters.forEach(counter => {
+                            const target = parseInt(counter.getAttribute('data-target'));
+
+                            gsap.fromTo(counter,
+                                { innerText: 0 },
+                                {
+                                    innerText: target,
+                                    duration: 2.5,
+                                    ease: "power2.out",
+                                    snap: { innerText: 1 }, // Snap to integers
+                                    onUpdate: function () {
+                                        counter.innerHTML = Math.floor(counter.innerText);
+                                    }
+                                }
+                            );
+                        });
+
+                        // Stop observing after animation
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            // Observe each stat item
+            statItems.forEach(item => {
+                statsObserver.observe(item);
+            });
+
+            // Animate elements on scroll with GSAP
+            gsap.utils.toArray('.modern-card, .modern-card-dark').forEach(card => {
+                gsap.from(card, {
+                    y: 60,
+                    opacity: 0,
+                    duration: 0.8,
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top bottom-=100",
+                        toggleActions: "play none none none"
+                    }
+                });
+            });
+
+            // Reveal texts on scroll
+            gsap.utils.toArray('.reveal-text').forEach(text => {
+                gsap.from(text, {
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.6,
+                    scrollTrigger: {
+                        trigger: text,
+                        start: "top bottom-=120",
+                        toggleActions: "play none none none"
+                    }
+                });
+            });
+
+            // 3D card hover effect
+            document.querySelectorAll('.card-3d').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const cardRect = card.getBoundingClientRect();
+                    const x = e.clientX - cardRect.left;
+                    const y = e.clientY - cardRect.top;
+
+                    const centerX = cardRect.width / 2;
+                    const centerY = cardRect.height / 2;
+
+                    const rotateX = (y - centerY) / 10;
+                    const rotateY = (centerX - x) / 10;
+
+                    card.querySelector('.card-3d-inner').style.transform =
+                        `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.querySelector('.card-3d-inner').style.transform =
+                        'perspective(1000px) rotateX(0) rotateY(0)';
+                });
+            });
+
+            // Form animation
+            const formInputs = document.querySelectorAll('.custom-input');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('focused');
+                });
+
+                input.addEventListener('blur', () => {
+                    input.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Departure board flip animation
+            const boardStations = document.querySelectorAll('.board-station');
+            boardStations.forEach(station => {
+                const statusElement = station.querySelector('.board-status');
+                if (statusElement && station.classList.contains('active')) {
+                    statusElement.style.animationPlayState = 'running';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
