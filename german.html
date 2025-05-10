@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swiss Railway Timetable Service</title>
+    <title>Schweizerischer Eisenbahn Fahrplandienst</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/TextPlugin.min.js"></script>
@@ -868,7 +868,12 @@
             background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 60%);
         }
 
-        
+        /* Add more padding to sections */
+        section {
+            padding-top: 80px;
+            padding-bottom: 80px;
+            margin-top: -80px;
+        }
 
         /* Stats section specific padding */
         .stats-section {
@@ -918,8 +923,7 @@
     <div class="bg-gradient-to-r from-blue-700 to-indigo-700 w-full py-2 text-white">
         <div class="news-ticker">
             <div class="news-ticker-content">
-                🔔 System update scheduled for May 5th, 2025 | New timetable API available | Documentation updates for
-                Alpine routes | Real-time tracking now available | Interactive 3D train map coming soon
+                🔔 Systemaktualisierung geplant für den 5. Mai 2025 | Neue Fahrplan-API verfügbar | Dokumentationsaktualisierungen für Alpenrouten | Echtzeit-Tracking jetzt verfügbar | Interaktive 3D-Zugkarte in Kürze erhältlich
             </div>
         </div>
     </div>
@@ -953,8 +957,8 @@
                     <div>
                         <h1
                             class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                            Swiss Railway</h1>
-                        <p class="text-xs text-blue-300">Timetable Service</p>
+                            Schweizer Bahn</h1>
+                        <p class="text-xs text-blue-300">Fahrplandienst</p>
                     </div>
                 </div>
 
@@ -980,27 +984,27 @@
                 <!-- Railway Station Board -->
                 <div class="departure-board">
                     <div class="board-station station-home active" data-position="12.5" data-section="home">
-                        Home
+                        Startseite
                         <div class="station-time">08:00</div>
-                        <div class="board-status">ON TIME</div>
+                        <div class="board-status">PÜNKTLICH</div>
                         <div class="station-connector"></div>
                     </div>
                     <div class="board-station station-timetables" data-position="37.5" data-section="timetables">
-                        Timetables
+                        Fahrpläne
                         <div class="station-time">08:15</div>
-                        <div class="board-status">ON TIME</div>
+                        <div class="board-status">PÜNKTLICH</div>
                         <div class="station-connector"></div>
                     </div>
                     <div class="board-station station-documentation" data-position="62.5" data-section="documentation">
-                        Documentation
+                        Dokumentation
                         <div class="station-time">08:30</div>
-                        <div class="board-status">ON TIME</div>
+                        <div class="board-status">PÜNKTLICH</div>
                         <div class="station-connector"></div>
                     </div>
                     <div class="board-station station-contact" data-position="87.5" data-section="contact">
-                        Contact
+                        Kontakt
                         <div class="station-time">08:45</div>
-                        <div class="board-status">ON TIME</div>
+                        <div class="board-status">PÜNKTLICH</div>
                         <div class="station-connector"></div>
                     </div>
                 </div>
@@ -1206,11 +1210,10 @@
             <div class="container mx-auto px-4 relative z-10">
                 <div class="hero-content text-center text-white">
                     <h2 class="text-5xl md:text-7xl font-bold mb-4 tracking-tight">
-                        <span class="power-text block">Swiss Railway</span>
-                        <span class="power-text block mt-2">Timetable Service</span>
+                        <span class="power-text block">Schweizer Bahn</span>
+                        <span class="power-text block mt-2">Fahrplandienst</span>
                     </h2>
-                    <p class="text-2xl mb-10 max-w-2xl mx-auto power-text opacity-0">Coordinating timetables for the
-                        entire Swiss railway network</p>
+                    <p class="text-2xl mb-10 max-w-2xl mx-auto power-text opacity-0">Koordination der Fahrpläne für das gesamte Schweizer Schienennetz</p>
                     <div class="flex flex-col sm:flex-row justify-center space-y-6 sm:space-y-0 sm:space-x-6">
                         <a href="#timetables" class="btn-primary flex items-center justify-center group">
                             <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
@@ -1219,7 +1222,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            Timetables
+                            Fahrpläne
                         </a>
                         <a href="#documentation" class="btn-secondary flex items-center justify-center group">
                             <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
@@ -1229,7 +1232,7 @@
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                                 </path>
                             </svg>
-                            Documentation
+                            Dokumentation
                         </a>
                     </div>
                 </div>
@@ -1252,23 +1255,23 @@
             <div class="container mx-auto px-4 relative z-10">
                 <h2
                     class="text-3xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                    Swiss Railway Network</h2>
+                    Schweizer Schienennetz</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
                     <div class="text-center stat-item modern-card-dark p-6">
                         <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="26000">0</div>
-                        <div class="text-blue-100">Trains Per Day</div>
+                        <div class="text-blue-100">Züge pro Tag</div>
                     </div>
                     <div class="text-center stat-item modern-card-dark p-6">
                         <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="5300">0</div>
-                        <div class="text-blue-100">km of Railway</div>
+                        <div class="text-blue-100">km Schienennetz</div>
                     </div>
                     <div class="text-center stat-item modern-card-dark p-6">
                         <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="400">0</div>
-                        <div class="text-blue-100">Railway Stations</div>
+                        <div class="text-blue-100">Bahnhöfe</div>
                     </div>
                     <div class="text-center stat-item modern-card-dark p-6">
                         <div class="text-4xl font-bold text-blue-400 mb-3 counter" data-target="93">0</div>
-                        <div class="text-blue-100">On-Time Performance %</div>
+                        <div class="text-blue-100">Pünktlichkeit %</div>
                     </div>
                 </div>
             </div>
@@ -1286,33 +1289,32 @@
         <!-- Timetables Section with Modern UI -->
         <section id="timetables" class="py-24 dual-tone-light relative">
             <div class="container mx-auto px-4">
-                <h2 class="text-4xl font-bold mb-3 text-center gradient-text">Timetable Search</h2>
-                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Find train schedules between any stations
-                    in the Swiss railway network</p>
+                <h2 class="text-4xl font-bold mb-3 text-center gradient-text">Fahrplansuche</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Finden Sie Zugverbindungen zwischen beliebigen Bahnhöfen im Schweizer Schienennetz</p>
 
                 <div class="max-w-4xl mx-auto">
                     <div class="glass-card p-8 shadow-xl search-box transition-all">
                         <form class="grid grid-cols-1 md:grid-cols-6 gap-8">
                             <div class="space-y-2 md:col-span-2 input-wrapper">
                                 <input id="departure" type="text" class="custom-input block w-full" placeholder=" ">
-                                <label class="input-label" for="departure">From</label>
+                                <label class="input-label" for="departure">Von</label>
                             </div>
 
                             <div class="space-y-2 md:col-span-2 input-wrapper">
                                 <input id="arrival" type="text" class="custom-input block w-full" placeholder=" ">
-                                <label class="input-label" for="arrival">To</label>
+                                <label class="input-label" for="arrival">Nach</label>
                             </div>
 
                             <div class="md:col-span-2">
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="space-y-2 input-wrapper">
                                         <input id="date" type="date" class="custom-input block w-full" placeholder=" ">
-                                        <label class="input-label" for="date">Date</label>
+                                        <label class="input-label" for="date">Datum</label>
                                     </div>
 
                                     <div class="space-y-2 input-wrapper">
                                         <input id="time" type="time" class="custom-input block w-full" placeholder=" ">
-                                        <label class="input-label" for="time">Time</label>
+                                        <label class="input-label" for="time">Zeit</label>
                                     </div>
                                 </div>
                             </div>
@@ -1320,18 +1322,15 @@
                             <div class="md:col-span-6 flex space-x-6">
                                 <div class="flex items-center">
                                     <input type="checkbox" id="direct-only" class="custom-checkbox">
-                                    <label for="direct-only" class="text-sm text-gray-700 font-medium">Direct
-                                        connections
-                                        only</label>
+                                    <label for="direct-only" class="text-sm text-gray-700 font-medium">Nur Direktverbindungen</label>
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="bike" class="custom-checkbox">
-                                    <label for="bike" class="text-sm text-gray-700 font-medium">Bike transport</label>
+                                    <label for="bike" class="text-sm text-gray-700 font-medium">Velotransport</label>
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="accessibility" class="custom-checkbox">
-                                    <label for="accessibility" class="text-sm text-gray-700 font-medium">Wheelchair
-                                        accessible</label>
+                                    <label for="accessibility" class="text-sm text-gray-700 font-medium">Rollstuhlgängig</label>
                                 </div>
                             </div>
 
@@ -1343,7 +1342,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
-                                    Search Connection
+                                    Verbindung suchen
                                 </button>
                             </div>
                         </form>
@@ -1353,10 +1352,10 @@
                 <!-- Popular Connections with Interactive Cards -->
                 <div class="max-w-4xl mx-auto mt-16">
                     <div class="flex justify-between items-center mb-8">
-                        <h3 class="text-2xl font-bold gradient-text">Popular Connections</h3>
+                        <h3 class="text-2xl font-bold gradient-text">Beliebte Verbindungen</h3>
                         <button
                             class="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium flex items-center group">
-                            View all
+                            Alle anzeigen
                             <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1373,9 +1372,9 @@
                                     <h4 class="font-bold text-lg">Zürich → Bern</h4>
                                     <span
                                         class="text-xs font-bold px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full">56
-                                        min</span>
+                                        Min.</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mb-5">Every hour at :02</div>
+                                <div class="text-sm text-gray-500 mb-5">Stündlich um :02</div>
                                 <div class="border-t border-gray-100 pt-4 space-y-4">
                                     <div class="flex justify-between text-sm relative overflow-hidden">
                                         <div class="flex items-center">
@@ -1417,7 +1416,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
-                                    More times
+                                    Weitere Zeiten
                                 </button>
                             </div>
                         </div>
@@ -1429,9 +1428,9 @@
                                     <h4 class="font-bold text-lg">Bern → Lausanne</h4>
                                     <span
                                         class="text-xs font-bold px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full">66
-                                        min</span>
+                                        Min.</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mb-5">Every hour at :34</div>
+                                <div class="text-sm text-gray-500 mb-5">Stündlich um :34</div>
                                 <div class="border-t border-gray-100 pt-4 space-y-4">
                                     <div class="flex justify-between text-sm relative overflow-hidden">
                                         <div class="flex items-center">
@@ -1473,7 +1472,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
-                                    More times
+                                    Weitere Zeiten
                                 </button>
                             </div>
                         </div>
@@ -1482,12 +1481,12 @@
                         <div class="modern-card p-6 connection-card card-3d">
                             <div class="card-3d-inner">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h4 class="font-bold text-lg">Zürich → Lucerne</h4>
+                                    <h4 class="font-bold text-lg">Zürich → Luzern</h4>
                                     <span
                                         class="text-xs font-bold px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full">45
-                                        min</span>
+                                        Min.</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mb-5">Every hour at :10</div>
+                                <div class="text-sm text-gray-500 mb-5">Stündlich um :10</div>
                                 <div class="border-t border-gray-100 pt-4 space-y-4">
                                     <div class="flex justify-between text-sm relative overflow-hidden">
                                         <div class="flex items-center">
@@ -1529,7 +1528,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
-                                    More times
+                                    Weitere Zeiten
                                 </button>
                             </div>
                         </div>
@@ -1539,20 +1538,20 @@
                 <!-- Live Departures Board -->
                 <div class="max-w-4xl mx-auto mt-16">
                     <div class="flex justify-between items-center mb-8">
-                        <h3 class="text-2xl font-bold gradient-text">Live Departures</h3>
+                        <h3 class="text-2xl font-bold gradient-text">Live-Abfahrten</h3>
                         <div class="flex items-center">
                             <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                            <span class="text-sm text-gray-600">Updating live</span>
+                            <span class="text-sm text-gray-600">Live-Aktualisierung</span>
                         </div>
                     </div>
 
                     <div class="glass-card overflow-hidden">
                         <div class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white py-3 px-6">
                             <div class="grid grid-cols-12 text-sm font-bold">
-                                <div class="col-span-1">Time</div>
-                                <div class="col-span-2">Train</div>
-                                <div class="col-span-4">Destination</div>
-                                <div class="col-span-2">Platform</div>
+                                <div class="col-span-1">Zeit</div>
+                                <div class="col-span-2">Zug</div>
+                                <div class="col-span-4">Ziel</div>
+                                <div class="col-span-2">Gleis</div>
                                 <div class="col-span-3">Status</div>
                             </div>
                         </div>
@@ -1561,28 +1560,28 @@
                                 class="grid grid-cols-12 py-4 px-6 items-center hover:bg-blue-50 transition-colors cursor-pointer">
                                 <div class="col-span-1 font-medium">09:32</div>
                                 <div class="col-span-2">IC 721</div>
-                                <div class="col-span-4">Geneva</div>
+                                <div class="col-span-4">Genève</div>
                                 <div class="col-span-2">
                                     <span
                                         class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">4</span>
                                 </div>
                                 <div class="col-span-3 flex items-center">
                                     <span class="status-indicator status-on-time"></span>
-                                    <span class="text-green-700 font-medium">On Time</span>
+                                    <span class="text-green-700 font-medium">Pünktlich</span>
                                 </div>
                             </div>
                             <div
                                 class="grid grid-cols-12 py-4 px-6 items-center hover:bg-blue-50 transition-colors cursor-pointer">
                                 <div class="col-span-1 font-medium">09:45</div>
                                 <div class="col-span-2">IR 2815</div>
-                                <div class="col-span-4">Lucerne</div>
+                                <div class="col-span-4">Luzern</div>
                                 <div class="col-span-2">
                                     <span
                                         class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">7</span>
                                 </div>
                                 <div class="col-span-3 flex items-center">
                                     <span class="status-indicator status-delayed"></span>
-                                    <span class="text-orange-700 font-medium">+5 min</span>
+                                    <span class="text-orange-700 font-medium">+5 Min.</span>
                                 </div>
                             </div>
                             <div
@@ -1596,7 +1595,7 @@
                                 </div>
                                 <div class="col-span-3 flex items-center">
                                     <span class="status-indicator status-on-time"></span>
-                                    <span class="text-green-700 font-medium">On Time</span>
+                                    <span class="text-green-700 font-medium">Pünktlich</span>
                                 </div>
                             </div>
                             <div
@@ -1610,7 +1609,7 @@
                                 </div>
                                 <div class="col-span-3 flex items-center">
                                     <span class="status-indicator status-cancelled"></span>
-                                    <span class="text-red-700 font-medium">Cancelled</span>
+                                    <span class="text-red-700 font-medium">Gestrichen</span>
                                 </div>
                             </div>
                         </div>
@@ -1624,8 +1623,8 @@
             <div class="container mx-auto px-4">
                 <h2
                     class="text-4xl font-bold mb-3 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                    Links & Documents</h2>
-                <p class="text-center text-blue-200 mb-16 max-w-2xl mx-auto">Essential resources for railway companies</p>
+                    Links & Dokumente</h2>
+                <p class="text-center text-blue-200 mb-16 max-w-2xl mx-auto">Wichtige Ressourcen für Eisenbahnunternehmen</p>
         
                 <div class="max-w-4xl mx-auto">
                     <div
@@ -1640,18 +1639,17 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-bold">Legal Framework & Documents</h3>
+                                <h3 class="text-2xl font-bold">Rechtliche Grundlagen & Dokumente</h3>
                             </div>
-                            <p class="mb-10 text-blue-200 text-lg">Essential legal documents and network statements for railway
-                                operators</p>
+                            <p class="mb-10 text-blue-200 text-lg">Wichtige Rechtsdokumente und Netzzugangserklärungen für Bahnbetreiber</p>
         
                             <!-- Legal Documents -->
                             <div class="mb-12">
-                                <h4 class="text-lg font-bold mb-6 text-blue-300">Legal Framework</h4>
+                                <h4 class="text-lg font-bold mb-6 text-blue-300">Rechtliche Grundlagen</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div class="modern-card-dark p-6">
-                                        <h5 class="font-bold text-white mb-2">Railways Act</h5>
-                                        <p class="text-xs text-blue-200 mb-3">Railways Act 742.101</p>
+                                        <h5 class="font-bold text-white mb-2">Eisenbahngesetz</h5>
+                                        <p class="text-xs text-blue-200 mb-3">Eisenbahngesetz 742.101</p>
                                         <div class="flex space-x-4 text-sm">
                                             <a href="https://www.fedlex.admin.ch/eli/cc/1958/335_341_347/de" target="_blank"
                                                 class="text-blue-400 hover:text-blue-300">DE</a>
@@ -1663,8 +1661,8 @@
                                     </div>
         
                                     <div class="modern-card-dark p-6">
-                                        <h5 class="font-bold text-white mb-2">TVSV Ordinance</h5>
-                                        <p class="text-xs text-blue-200 mb-3">Train Path Allocation 742.123</p>
+                                        <h5 class="font-bold text-white mb-2">TVSV Verordnung</h5>
+                                        <p class="text-xs text-blue-200 mb-3">Trassenzuteilungsverordnung 742.123</p>
                                         <div class="flex space-x-4 text-sm">
                                             <a href="https://www.fedlex.admin.ch/eli/cc/2017/384/de" target="_blank"
                                                 class="text-blue-400 hover:text-blue-300">DE</a>
@@ -1676,8 +1674,8 @@
                                     </div>
         
                                     <div class="modern-card-dark p-6">
-                                        <h5 class="font-bold text-white mb-2">RailNAO</h5>
-                                        <p class="text-xs text-blue-200 mb-3">Rail Network Access 742.122</p>
+                                        <h5 class="font-bold text-white mb-2">NZV</h5>
+                                        <p class="text-xs text-blue-200 mb-3">Netzzugangsverordnung 742.122</p>
                                         <div class="flex space-x-4 text-sm">
                                             <a href="https://www.fedlex.admin.ch/eli/cc/1999/39/de" target="_blank"
                                                 class="text-blue-400 hover:text-blue-300">DE</a>
@@ -1692,16 +1690,16 @@
         
                             <!-- Network Statements -->
                             <div class="mb-12">
-                                <h4 class="text-lg font-bold mb-6 text-blue-300">Network Statements</h4>
+                                <h4 class="text-lg font-bold mb-6 text-blue-300">Netzzugangserklärungen</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <a href="https://www.sbb.ch/de/gueter/ueber-uns/rechtliches/netzvereinbarung.html"
                                         target="_blank"
                                         class="modern-card-dark block p-6 hover:border-blue-500 transition-all card-3d relative overflow-hidden">
                                         <div class="card-3d-inner">
                                             <h5 class="font-bold text-lg text-white mb-2">SBB / BLS / SOB</h5>
-                                            <p class="text-sm text-blue-200">Network statements for major operators</p>
+                                            <p class="text-sm text-blue-200">Netzzugangserklärungen der grossen Betreiber</p>
                                             <div class="mt-4 flex items-center text-blue-400 text-sm font-medium group">
-                                                View Document
+                                                Dokument ansehen
                                                 <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1712,13 +1710,13 @@
                                         </div>
                                     </a>
         
-                                    <a href="#" onclick="alert('Document will be available soon'); return false;"
+                                    <a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                         class="modern-card-dark block p-6 hover:border-blue-500 transition-all card-3d relative overflow-hidden">
                                         <div class="card-3d-inner">
-                                            <h5 class="font-bold text-lg text-white mb-2">Regional Networks</h5>
-                                            <p class="text-sm text-blue-200">CJ, OeBB, ST, SZU, TMR statements</p>
+                                            <h5 class="font-bold text-lg text-white mb-2">Regionale Netze</h5>
+                                            <p class="text-sm text-blue-200">Erklärungen CJ, OeBB, ST, SZU, TMR</p>
                                             <div class="mt-4 flex items-center text-blue-400 text-sm font-medium group">
-                                                View Document
+                                                Dokument ansehen
                                                 <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1729,13 +1727,13 @@
                                         </div>
                                     </a>
         
-                                    <a href="#" onclick="alert('Document will be available soon'); return false;"
+                                    <a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                         class="modern-card-dark block p-6 hover:border-blue-500 transition-all card-3d relative overflow-hidden">
                                         <div class="card-3d-inner">
-                                            <h5 class="font-bold text-lg text-white mb-2">Local Networks</h5>
-                                            <p class="text-sm text-blue-200">tpf, transN, TRAVYS statements</p>
+                                            <h5 class="font-bold text-lg text-white mb-2">Lokale Netze</h5>
+                                            <p class="text-sm text-blue-200">Erklärungen tpf, transN, TRAVYS</p>
                                             <div class="mt-4 flex items-center text-blue-400 text-sm font-medium group">
-                                                View Document
+                                                Dokument ansehen
                                                 <svg class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-2"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1765,53 +1763,53 @@
                             <div>
                                 <h3
                                     class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                                    Path Ordering</h3>
+                                    Trassenbestellung</h3>
                                 <div class="modern-card-dark p-8">
                                     <ul class="space-y-4">
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Timetable Updates (JUP) 2025
+                                                Fahrplanaktualisierungen (JUP) 2025
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Timetable Updates (JUP) 2026
+                                                Fahrplanaktualisierungen (JUP) 2026
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Ancillary services forms 2025
+                                                Formulare für Nebenleistungen 2025
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Ancillary services forms 2026
+                                                Formulare für Nebenleistungen 2026
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Path ordering deadlines
+                                                Bestellfristen für Trassen
                                             </a></li>
                                     </ul>
                                 </div>
@@ -1821,7 +1819,7 @@
                             <div>
                                 <h3
                                     class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                                    Technical Resources</h3>
+                                    Technische Ressourcen</h3>
                                 <div class="modern-card-dark p-8">
                                     <ul class="space-y-4">
                                         <li><a href="https://www.rinf-ch.ch/" target="_blank"
@@ -1831,16 +1829,16 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Infrastructure Register
+                                                Infrastrukturregister
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Train Graphs
+                                                Bildfahrpläne
                                             </a></li>
                                         <li><a href="https://maps.sbb.ch/netzkarte" target="_blank"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
@@ -1849,25 +1847,25 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Network Maps
+                                                Netzkarten
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Path Catalogues
+                                                Trassenkataloge
                                             </a></li>
-                                        <li><a href="#" onclick="alert('Document will be available soon'); return false;"
+                                        <li><a href="#" onclick="alert('Dokument wird in Kürze verfügbar sein'); return false;"
                                                 class="text-blue-400 hover:text-blue-300 flex items-center group">
                                                 <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
-                                                Investment Plans
+                                                Investitionspläne
                                             </a></li>
                                     </ul>
                                 </div>
@@ -1881,36 +1879,35 @@
         <!-- Contact Section with Modern Form -->
         <section id="contact" class="py-24 dual-tone-light relative">
             <div class="container mx-auto px-4">
-                <h2 class="text-4xl font-bold mb-3 text-center gradient-text">Contact</h2>
-                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Get in touch with our team for timetable
-                    information</p>
+                <h2 class="text-4xl font-bold mb-3 text-center gradient-text">Kontakt</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Kontaktieren Sie unser Team für Fahrplaninformationen</p>
 
                 <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div>
                         <form class="glass-card p-8 shadow-xl">
-                            <h3 class="text-2xl font-bold mb-6 gradient-text">Send us a message</h3>
+                            <h3 class="text-2xl font-bold mb-6 gradient-text">Senden Sie uns eine Nachricht</h3>
                             <div class="mb-5 input-wrapper">
                                 <input id="name" type="text" class="custom-input block w-full" placeholder=" ">
                                 <label class="input-label" for="name">Name</label>
                             </div>
                             <div class="mb-5 input-wrapper">
                                 <input id="email" type="email" class="custom-input block w-full" placeholder=" ">
-                                <label class="input-label" for="email">Email</label>
+                                <label class="input-label" for="email">E-Mail</label>
                             </div>
                             <div class="mb-5 input-wrapper">
                                 <select id="subject" class="custom-input block w-full">
                                     <option value=""></option>
-                                    <option value="timetable">Timetable Inquiry</option>
-                                    <option value="documentation">Documentation Request</option>
-                                    <option value="data">Data Services</option>
-                                    <option value="other">Other</option>
+                                    <option value="timetable">Fahrplananfrage</option>
+                                    <option value="documentation">Dokumentationsanfrage</option>
+                                    <option value="data">Datendienste</option>
+                                    <option value="other">Sonstiges</option>
                                 </select>
-                                <label class="input-label" for="subject">Subject</label>
+                                <label class="input-label" for="subject">Betreff</label>
                             </div>
                             <div class="mb-8 input-wrapper">
                                 <textarea id="message" rows="5" class="custom-input block w-full"
                                     placeholder=" "></textarea>
-                                <label class="input-label" for="message">Message</label>
+                                <label class="input-label" for="message">Nachricht</label>
                             </div>
                             <button type="button" class="btn-primary w-full flex items-center justify-center group">
                                 <svg class="w-6 h-6 mr-2 transition-transform duration-300 group-hover:translate-x-1"
@@ -1920,14 +1917,14 @@
                                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                                     </path>
                                 </svg>
-                                Send Message
+                                Nachricht senden
                             </button>
                         </form>
                     </div>
 
                     <div>
                         <div class="glass-card p-8 h-full shadow-xl">
-                            <h3 class="text-2xl font-bold mb-6 gradient-text">Contact Information</h3>
+                            <h3 class="text-2xl font-bold mb-6 gradient-text">Kontaktinformationen</h3>
                             <div class="space-y-8">
                                 <div class="flex">
                                     <div class="flex-shrink-0 mr-4">
@@ -1944,8 +1941,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-gray-900 mb-2">Address</h4>
-                                        <p class="text-gray-600">Hochschulstrasse 6<br>3012 Bern, Switzerland</p>
+                                        <h4 class="font-bold text-gray-900 mb-2">Adresse</h4>
+                                        <p class="text-gray-600">Hochschulstrasse 6<br>3012 Bern, Schweiz</p>
                                     </div>
                                 </div>
                                 <div class="flex">
@@ -1961,7 +1958,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-gray-900 mb-2">Email</h4>
+                                        <h4 class="font-bold text-gray-900 mb-2">E-Mail</h4>
                                         <p class="text-gray-600">info@railway-timetable.ch</p>
                                     </div>
                                 </div>
@@ -1979,7 +1976,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-gray-900 mb-2">Phone</h4>
+                                        <h4 class="font-bold text-gray-900 mb-2">Telefon</h4>
                                         <p class="text-gray-600">+41 31 123 45 67</p>
                                     </div>
                                 </div>
@@ -1996,8 +1993,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-gray-900 mb-2">Office Hours</h4>
-                                        <p class="text-gray-600">Monday - Friday: 8:00 - 17:00<br>Weekend: Closed</p>
+                                        <h4 class="font-bold text-gray-900 mb-2">Bürozeiten</h4>
+                                        <p class="text-gray-600">Montag - Freitag: 8:00 - 17:00 Uhr<br>Wochenende: Geschlossen</p>
                                     </div>
                                 </div>
                             </div>
@@ -2012,7 +2009,7 @@
                                         d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7">
                                     </path>
                                 </svg>
-                                View on interactive map
+                                Auf interaktiver Karte anzeigen
                             </button>
                         </div>
                     </div>
@@ -2042,12 +2039,11 @@
                                 stroke-linecap="round" />
                         </svg>
                         <div>
-                            <h3 class="text-xl font-bold">Swiss Railway</h3>
-                            <p class="text-xs text-blue-300">Timetable Service</p>
+                            <h3 class="text-xl font-bold">Schweizer Bahn</h3>
+                            <p class="text-xs text-blue-300">Fahrplandienst</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm mb-6">The official timetable service for the Swiss railway network.
-                        Providing real-time updates and comprehensive scheduling information.</p>
+                    <p class="text-gray-400 text-sm mb-6">Der offizielle Fahrplandienst für das Schweizer Schienennetz. Bietet Echtzeit-Updates und umfassende Fahrplaninformationen.</p>
 
                     <!-- Social media icons -->
                     <div class="flex space-x-4">
@@ -2079,7 +2075,7 @@
                 </div>
 
                 <div>
-                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Quick Links</h4>
+                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Schnelllinks</h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="#home"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2090,7 +2086,7 @@
                                         d="M9 5l7 7-7 7">
                                     </path>
                                 </svg>
-                                Home
+                                Startseite
                             </a></li>
                         <li><a href="#timetables"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2101,7 +2097,7 @@
                                         d="M9 5l7 7-7 7">
                                     </path>
                                 </svg>
-                                Timetables
+                                Fahrpläne
                             </a></li>
                         <li><a href="#documentation"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2112,7 +2108,7 @@
                                         d="M9 5l7 7-7 7">
                                     </path>
                                 </svg>
-                                Documentation
+                                Dokumentation
                             </a></li>
                         <li><a href="#contact"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2123,12 +2119,12 @@
                                         d="M9 5l7 7-7 7">
                                     </path>
                                 </svg>
-                                Contact
+                                Kontakt
                             </a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Resources</h4>
+                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Ressourcen</h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2138,7 +2134,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                TVS Documentation
+                                TVS-Dokumentation
                             </a></li>
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2148,7 +2144,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                Technical Specifications
+                                Technische Spezifikationen
                             </a></li>
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2158,7 +2154,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                Data Services
+                                Datendienste
                             </a></li>
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2168,13 +2164,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                API Reference
+                                API-Referenz
                             </a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Legal</h4>
+                    <h4 class="text-sm font-bold uppercase mb-6 text-blue-300">Rechtliches</h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2184,7 +2180,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                Privacy Policy
+                                Datenschutzrichtlinie
                             </a></li>
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2194,7 +2190,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                Terms of Service
+                                Nutzungsbedingungen
                             </a></li>
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2204,7 +2200,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                Accessibility
+                                Barrierefreiheit
                             </a></li>
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white transition-colors flex items-center group">
@@ -2214,14 +2210,14 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5l7 7-7 7"></path>
                                 </svg>
-                                Imprint
+                                Impressum
                             </a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
-                <p>&copy; 2025 Swiss Railway Timetable Service. All rights reserved.</p>
+                <p>&copy; 2025 Schweizer Bahn Fahrplandienst. Alle Rechte vorbehalten.</p>
             </div>
         </div>
     </footer>
